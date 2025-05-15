@@ -1,5 +1,20 @@
 <template>
   <div class="chat-container">
+    <!-- Agent Selection -->
+    <div class="agent-selector">
+      <div class="agent-selector-label">Select an AI Agent:</div>
+      <div class="agent-options">
+        <button
+          v-for="agent in agents"
+          :key="agent.type"
+          :class="['agent-button', { active: selectedAgent === agent.type }]"
+          @click="selectedAgent = agent.type"
+        >
+          {{ agent.name }}
+        </button>
+      </div>
+    </div>
+
     <!-- Chat messages -->
     <div ref="chatContainer" class="chat-messages">
       <div
@@ -45,7 +60,17 @@
 
 <script setup lang="ts">
 import { ref, nextTick } from 'vue'
+import { chatWithAgent, type AgentType } from '../services/api'
 
+const agents = [
+  { type: 'general' as AgentType, name: 'General Assistant' },
+  { type: 'technical' as AgentType, name: 'Technical Expert' },
+  { type: 'creative' as AgentType, name: 'Creative Assistant' },
+  { type: 'analytical' as AgentType, name: 'Analytical Expert' },
+  { type: 'research' as AgentType, name: 'Research Assistant' }
+]
+
+const selectedAgent = ref<AgentType>('general')
 const prompt = ref('')
 const messages = ref([
   { role: 'assistant', content: 'Hello! How can I help you today?' }
@@ -93,8 +118,8 @@ const handleSubmit = async () => {
   selectedFileName.value = null
   if (fileInput.value) fileInput.value.value = ''
 
-  // === Replace with your real API ===
-  const reply = await fakeApiCall({
+  // Call the API with selected agent
+  const reply = await chatWithAgent(selectedAgent.value, {
     prompt: trimmedPrompt,
     fileContent,
     fileName
@@ -109,27 +134,6 @@ const handleSubmit = async () => {
     behavior: 'smooth'
   })
 }
-
-
-const fakeApiCall = async ({
-  prompt,
-  fileContent,
-  fileName
-}: {
-  prompt: string
-  fileContent?: string
-  fileName?: string
-}): Promise<string> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      let response = `You said: "${prompt}"`
-      if (fileContent) {
-        response += `\nReceived file "${fileName}" with ${fileContent.length} characters.`
-      }
-      resolve(response)
-    }, 1000)
-  })
-}
 </script>
 
 <style scoped>
@@ -138,6 +142,44 @@ const fakeApiCall = async ({
   flex-direction: column;
   height: 100vh;
   background-color: #f8f8f8;
+}
+
+.agent-selector {
+  padding: 1rem;
+  background-color: white;
+  border-bottom: 1px solid #ddd;
+}
+
+.agent-selector-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.agent-options {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.agent-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 1.5rem;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.agent-button:hover {
+  background-color: #f0f0f0;
+}
+
+.agent-button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
 }
 
 .chat-messages {
@@ -167,6 +209,7 @@ const fakeApiCall = async ({
   background-color: #ffffff;
   border: 1px solid #ddd;
   color: #333;
+  white-space: pre-wrap;
 }
 
 .message.user .message-bubble {
