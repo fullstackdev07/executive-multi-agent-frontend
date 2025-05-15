@@ -63,14 +63,14 @@ import { ref, nextTick } from 'vue'
 import { chatWithAgent, type AgentType } from '../services/api'
 
 const agents = [
-  { type: 'general' as AgentType, name: 'General Assistant' },
-  { type: 'technical' as AgentType, name: 'Technical Expert' },
-  { type: 'creative' as AgentType, name: 'Creative Assistant' },
-  { type: 'analytical' as AgentType, name: 'Analytical Expert' },
-  { type: 'research' as AgentType, name: 'Research Assistant' }
+  { type: 'market_intelligence' as AgentType, name: 'Market Intelligence' },
+  { type: 'jd_agenet' as AgentType, name: 'JD Agent' },
+  { type: 'client_repersentative_agent' as AgentType, name: 'Client Representative' },
+  { type: 'client_repersentative_creator_agent' as AgentType, name: 'Client Representative Creator' },
+  { type: 'interview_report_agent' as AgentType, name: 'Interview Report' }
 ]
 
-const selectedAgent = ref<AgentType>('general')
+const selectedAgent = ref<AgentType>('market_intelligence')
 const prompt = ref('')
 const messages = ref([
   { role: 'assistant', content: 'Hello! How can I help you today?' }
