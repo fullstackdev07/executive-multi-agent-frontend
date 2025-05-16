@@ -31,28 +31,28 @@
     <!-- Input and file upload for regular agents and client representative creator -->
     <form 
       v-if="selectedAgent === 'client_representative_creator_agent'" 
-      @submit.prevent="handleSubmit" 
+      @submit.prevent="handleClientCharacteristicsSubmit" 
       class="chat-input-container"
     >
-      <label class="file-label" :title="getFileUploadTitle">
-        📎
-        <input
-          ref="fileInput"
-          type="file"
-          accept=".json"
-          @change="handleFileChange"
-          class="hidden-file-input"
-        />
-      </label>
+      <div class="file-uploads">
+        <div class="file-upload-group">
+          <label class="file-label" title="Upload User Input File">
+            📄 User Input File
+            <input
+              ref="userInputFileInput"
+              type="file"
+              accept=".json"
+              @change="handleUserInputFileChange"
+              class="hidden-file-input"
+            />
+          </label>
+          <span v-if="userInputFileName" class="file-name">{{ userInputFileName }}</span>
+        </div>
+      </div>
 
-      <input
-        v-model="prompt"
-        type="text"
-        :placeholder="getInputPlaceholder"
-        class="chat-input"
-      />
-
-      <button type="submit" class="chat-button" :disabled="isSubmitDisabled">Send</button>
+      <button type="submit" class="chat-button" :disabled="!canSubmitClientCharacteristics">
+        Generate Client Characteristics
+      </button>
     </form>
 
     <!-- Special input for Job Description Agent -->
@@ -146,7 +146,7 @@
       <div class="file-uploads">
         <div class="file-upload-group">
           <label class="file-label" title="Upload Market Report">
-            📊 Market Report
+            📊 Conversation File
             <input
               ref="marketIntelligenceFileInput"
               type="file"
@@ -760,6 +760,7 @@ const handleClientCharacteristicsSubmit = async () => {
 .chat-input-container,
 .special-input-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   padding: 1rem;
   border-top: 1px solid #ddd;
