@@ -65,12 +65,12 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
 
       // Log what we're sending
       console.log('Sending request to Market Intelligence API:', {
-        endpoint: 'https://45c9-2405-201-4021-112e-1c1-1dcb-3765-8318.ngrok-free.app/market_intelligence',
+        endpoint: 'https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/market_intelligence',
         fileName: payload.fileName,
         hasFileContent: !!payload.fileContent
       });
 
-      const response = await fetch('https://45c9-2405-201-4021-112e-1c1-1dcb-3765-8318.ngrok-free.app/market_intelligence', {
+      const response = await fetch('https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/market_intelligence', {
         method: 'POST',
         body: formData
       });
@@ -113,12 +113,12 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       }
 
       console.log('Sending request to Job Description API:', {
-        endpoint: 'https://45c9-2405-201-4021-112e-1c1-1dcb-3765-8318.ngrok-free.app/job_description',
+        endpoint: 'https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/job_description',
         hasTranscriptFile: !!payload.transcript_file,
         hasMarketReportFile: !!payload.market_report_file
       });
 
-      const response = await fetch('https://45c9-2405-201-4021-112e-1c1-1dcb-3765-8318.ngrok-free.app/job_description', {
+      const response = await fetch('https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/job_description', {
         method: 'POST',
         body: formData
       });
@@ -161,12 +161,12 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       }
 
       console.log('Sending request to Client Feedback API:', {
-        endpoint: 'https://45c9-2405-201-4021-112e-1c1-1dcb-3765-8318.ngrok-free.app/client_feedback',
+        endpoint: 'https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/client_feedback',
         hasTranscriptFile: !!payload.transcript_file,
         hasJobDescriptionFile: !!payload.job_description_file
       });
 
-      const response = await fetch('https://45c9-2405-201-4021-112e-1c1-1dcb-3765-8318.ngrok-free.app/client_feedback', {
+      const response = await fetch('https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/client_feedback', {
         method: 'POST',
         body: formData
       });
@@ -206,12 +206,12 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       }
 
       console.log('Sending request to Client Characteristics API:', {
-        endpoint: 'https://45c9-2405-201-4021-112e-1c1-1dcb-3765-8318.ngrok-free.app/client_characteristics',
+        endpoint: 'https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/client_characteristics',
         hasUserInputFile: !!payload.user_input_file,
         fileName: payload.user_input_file?.name
       });
 
-      const response = await fetch('https://45c9-2405-201-4021-112e-1c1-1dcb-3765-8318.ngrok-free.app/client_characteristics', {
+      const response = await fetch('https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/client_characteristics', {
         method: 'POST',
         body: formData
       });
@@ -255,13 +255,13 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       }
 
       console.log('Sending request to Interview Report API:', {
-        endpoint: 'https://45c9-2405-201-4021-112e-1c1-1dcb-3765-8318.ngrok-free.app/interview_report',
+        endpoint: 'https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/interview_report',
         hasJobDescriptionFile: !!payload.job_description_file,
         hasCandidateCVFile: !!payload.candidate_cv_file,
         hasInterviewTranscriptFile: !!payload.interview_transcript_file
       });
 
-      const response = await fetch('https://45c9-2405-201-4021-112e-1c1-1dcb-3765-8318.ngrok-free.app/interview_report', {
+      const response = await fetch('https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/interview_report', {
         method: 'POST',
         body: formData
       });
