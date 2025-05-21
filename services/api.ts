@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-interface ChatPayload {
+export interface ChatPayload {
   prompt: string;
   fileContent?: string;
   fileName?: string;
@@ -10,6 +10,10 @@ interface ChatPayload {
   user_input_file?: File;
   candidate_cv_file?: File;
   interview_transcript_file?: File;
+  supporting_documents?: File[];
+  transcript_files?: File[];
+  jd_files?: File[];
+  interview_files?: File[];
 }
 
 interface MarketIntelligenceResponse {
@@ -21,7 +25,7 @@ interface JobDescriptionResponse {
 }
 
 interface ClientFeedbackResponse {
-  client_feedback: string;
+  generated_prompt: string;
 }
 
 interface ClientCharacteristicsResponse {
@@ -52,25 +56,26 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       // Create FormData object
       const formData = new FormData();
       
-      // If there's a file, create a file blob and append it
-      if (payload.fileContent) {
-        // Create a JSON string from the file content if it's not already a string
-        const jsonContent = typeof payload.fileContent === 'string' 
-          ? payload.fileContent 
-          : JSON.stringify(payload.fileContent);
+      // Add company_information (prompt)
+      if (payload.prompt) {
+        formData.append('company_information', payload.prompt);
+      }
 
-        const fileBlob = new Blob([jsonContent], { type: 'application/json' });
-        formData.append('conversation_file', fileBlob, payload.fileName || 'conversation.json');
+      // Add all supporting documents
+      if (payload.supporting_documents && payload.supporting_documents.length > 0) {
+        for (const file of payload.supporting_documents) {
+          formData.append('supporting_documents', file, file.name);
+        }
       }
 
       // Log what we're sending
       console.log('Sending request to Market Intelligence API:', {
-        endpoint: 'https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/market_intelligence',
-        fileName: payload.fileName,
-        hasFileContent: !!payload.fileContent
+        endpoint: 'https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/market_intelligence',
+        company_information: payload.prompt,
+        supporting_documents: payload.supporting_documents?.map(f => f.name)
       });
 
-      const response = await fetch('https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/market_intelligence', {
+      const response = await fetch('https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/market_intelligence', {
         method: 'POST',
         body: formData
       });
@@ -102,23 +107,25 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       // Create FormData object
       const formData = new FormData();
       
-      // Append the transcript file if present
-      if (payload.transcript_file) {
-        formData.append('transcript_file', payload.transcript_file);
+      // Add manual_input (prompt)
+      if (payload.prompt) {
+        formData.append('manual_input', payload.prompt);
       }
 
-      // Append the market report file if present
-      if (payload.market_report_file) {
-        formData.append('market_report_file', payload.market_report_file);
+      // Add all files
+      if (payload.jd_files && payload.jd_files.length > 0) {
+        for (const file of payload.jd_files) {
+          formData.append('files', file, file.name);
+        }
       }
 
       console.log('Sending request to Job Description API:', {
-        endpoint: 'https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/job_description',
-        hasTranscriptFile: !!payload.transcript_file,
-        hasMarketReportFile: !!payload.market_report_file
+        endpoint: 'https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/job_description',
+        manual_input: payload.prompt,
+        files: payload.jd_files?.map(f => f.name)
       });
 
-      const response = await fetch('https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/job_description', {
+      const response = await fetch('https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/job_description', {
         method: 'POST',
         body: formData
       });
@@ -130,7 +137,7 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       }
 
       try {
-        const data = await response.json() as JobDescriptionResponse;
+        const data = await response.json();
         return data.job_description || 'No job description available in the response';
       } catch (parseError) {
         console.error('Error parsing response:', parseError);
@@ -150,23 +157,25 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       // Create FormData object
       const formData = new FormData();
       
-      // Append the transcript file if present
-      if (payload.transcript_file) {
-        formData.append('transcript_file', payload.transcript_file);
+      // Add manual_input_text (prompt)
+      if (payload.prompt) {
+        formData.append('manual_input_text', payload.prompt);
       }
 
-      // Append the job description file if present
-      if (payload.job_description_file) {
-        formData.append('job_description_file', payload.job_description_file);
+      // Add all transcript files
+      if (payload.transcript_files && payload.transcript_files.length > 0) {
+        for (const file of payload.transcript_files) {
+          formData.append('transcript_files', file, file.name);
+        }
       }
 
       console.log('Sending request to Client Feedback API:', {
-        endpoint: 'https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/client_feedback',
-        hasTranscriptFile: !!payload.transcript_file,
-        hasJobDescriptionFile: !!payload.job_description_file
+        endpoint: 'https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/client_feedback',
+        manual_input_text: payload.prompt,
+        transcript_files: payload.transcript_files?.map(f => f.name)
       });
 
-      const response = await fetch('https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/client_feedback', {
+      const response = await fetch('https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/client_feedback', {
         method: 'POST',
         body: formData
       });
@@ -179,7 +188,7 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
 
       try {
         const data = await response.json() as ClientFeedbackResponse;
-        return data.client_feedback || 'No client feedback available in the response';
+        return data.generated_prompt || 'No client feedback available in the response';
       } catch (parseError) {
         console.error('Error parsing response:', parseError);
         const textResponse = await response.text();
@@ -206,12 +215,12 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       }
 
       console.log('Sending request to Client Characteristics API:', {
-        endpoint: 'https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/client_characteristics',
+        endpoint: 'https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/client_characteristics',
         hasUserInputFile: !!payload.user_input_file,
         fileName: payload.user_input_file?.name
       });
 
-      const response = await fetch('https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/client_characteristics', {
+      const response = await fetch('https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/client_characteristics', {
         method: 'POST',
         body: formData
       });
@@ -235,33 +244,25 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       // Create FormData object
       const formData = new FormData();
       
-      // Append all required files
-      if (payload.job_description_file) {
-        formData.append('job_description_file', payload.job_description_file);
-      } else {
-        throw new Error('Job description file is required');
+      // Add manual_input (prompt)
+      if (payload.prompt) {
+        formData.append('manual_input', payload.prompt);
       }
 
-      if (payload.candidate_cv_file) {
-        formData.append('candidate_cv_file', payload.candidate_cv_file);
-      } else {
-        throw new Error('Candidate CV file is required');
-      }
-
-      if (payload.interview_transcript_file) {
-        formData.append('interview_transcript_file', payload.interview_transcript_file);
-      } else {
-        throw new Error('Interview transcript file is required');
+      // Add all files
+      if (payload.interview_files && payload.interview_files.length > 0) {
+        for (const file of payload.interview_files) {
+          formData.append('files', file, file.name);
+        }
       }
 
       console.log('Sending request to Interview Report API:', {
-        endpoint: 'https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/interview_report',
-        hasJobDescriptionFile: !!payload.job_description_file,
-        hasCandidateCVFile: !!payload.candidate_cv_file,
-        hasInterviewTranscriptFile: !!payload.interview_transcript_file
+        endpoint: 'https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/interview_report',
+        manual_input: payload.prompt,
+        files: payload.interview_files?.map(f => f.name)
       });
 
-      const response = await fetch('https://7840-2405-201-4021-112e-5000-d2ab-1e7a-28d1.ngrok-free.app/interview_report', {
+      const response = await fetch('https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/interview_report', {
         method: 'POST',
         body: formData
       });
@@ -269,13 +270,18 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       console.log('Response status:', response.status);
       
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('API Error Response:', errorText);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json() as InterviewReportResponse;
-      return data.interview_report || 'No interview report available in the response';
+      try {
+        const data = await response.json();
+        return data.interview_report || 'No interview report available in the response';
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        const textResponse = await response.text();
+        console.log('Raw response:', textResponse);
+        return 'Error: Could not parse the interview report response';
+      }
     } catch (error: any) {
       console.error('Error calling the Interview Report API:', error);
       return `Error: ${error.message || 'Unknown error occurred'}`;

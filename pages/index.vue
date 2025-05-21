@@ -61,33 +61,28 @@
       @submit.prevent="handleJDSubmit" 
       class="special-input-container"
     >
+    <input
+      v-model="prompt"
+      type="text"
+      placeholder="Enter company information..."
+      class="chat-input"
+    />
       <div class="file-uploads">
         <div class="file-upload-group">
-          <label class="file-label" title="Upload Transcript">
-            📄 Transcript
+          <label class="file-label" title="Upload Files">
+            📄 Files
             <input
-              ref="transcriptFileInput"
+              ref="jdFilesInput"
               type="file"
-              accept=".txt,.json"
-              @change="handleTranscriptFileChange"
+              accept=".txt,.json,.pdf"
+              @change="handleJDFileChange"
               class="hidden-file-input"
+              multiple
             />
           </label>
-          <span v-if="transcriptFileName" class="file-name">{{ transcriptFileName }}</span>
-        </div>
-
-        <div class="file-upload-group">
-          <label class="file-label" title="Upload Market Report">
-            📊 Market Report
-            <input
-              ref="marketReportFileInput"
-              type="file"
-              accept=".txt,.json"
-              @change="handleMarketReportFileChange"
-              class="hidden-file-input"
-            />
-          </label>
-          <span v-if="marketReportFileName" class="file-name">{{ marketReportFileName }}</span>
+          <span v-if="jdFiles.length" class="file-name">
+            {{ jdFiles.map(f => f.name).join(', ') }}
+          </span>
         </div>
       </div>
 
@@ -102,33 +97,28 @@
       @submit.prevent="handleClientFeedbackSubmit" 
       class="special-input-container"
     >
+    <input
+      v-model="prompt"
+      type="text"
+      placeholder="Enter company information..."
+      class="chat-input"
+    />
       <div class="file-uploads">
         <div class="file-upload-group">
-          <label class="file-label" title="Upload Transcript">
-            📄 Transcript
+          <label class="file-label" title="Upload Transcript Files">
+            📄 Transcript Files
             <input
               ref="clientTranscriptFileInput"
               type="file"
-              accept=".txt,.json"
+              accept=".txt,.json,.pdf"
               @change="handleClientTranscriptFileChange"
               class="hidden-file-input"
+              multiple
             />
           </label>
-          <span v-if="clientTranscriptFileName" class="file-name">{{ clientTranscriptFileName }}</span>
-        </div>
-
-        <div class="file-upload-group">
-          <label class="file-label" title="Upload Job Description">
-            📋 Job Description
-            <input
-              ref="clientJobDescriptionFileInput"
-              type="file"
-              accept=".txt,.json"
-              @change="handleClientJobDescriptionFileChange"
-              class="hidden-file-input"
-            />
-          </label>
-          <span v-if="clientJobDescriptionFileName" class="file-name">{{ clientJobDescriptionFileName }}</span>
+          <span v-if="clientTranscriptFiles.length" class="file-name">
+            {{ clientTranscriptFiles.map(f => f.name).join(', ') }}
+          </span>
         </div>
       </div>
 
@@ -143,6 +133,13 @@
       @submit.prevent="handleMarketIntelligenceSubmit" 
       class="special-input-container"
     >
+      <!-- ADD THIS BLOCK FOR PROMPT INPUT -->
+  <input
+    v-model="prompt"
+    type="text"
+    placeholder="Enter company information..."
+    class="chat-input"
+  />
       <div class="file-uploads">
         <div class="file-upload-group">
           <label class="file-label" title="Upload Market Report">
@@ -150,12 +147,15 @@
             <input
               ref="marketIntelligenceFileInput"
               type="file"
-              accept=".txt,.json"
+              accept=".txt,.json,.pdf"
               @change="handleMarketIntelligenceFileChange"
               class="hidden-file-input"
+              multiple
             />
           </label>
-          <span v-if="marketIntelligenceFileName" class="file-name">{{ marketIntelligenceFileName }}</span>
+          <span v-if="marketIntelligenceFiles.length" class="file-name">
+            {{ marketIntelligenceFiles.map(f => f.name).join(', ') }}
+          </span>
         </div>
       </div>
 
@@ -170,47 +170,28 @@
       @submit.prevent="handleInterviewReportSubmit" 
       class="special-input-container"
     >
+    <input
+      v-model="prompt"
+      type="text"
+      placeholder="Enter company information..."
+      class="chat-input"
+    />
       <div class="file-uploads">
         <div class="file-upload-group">
-          <label class="file-label" title="Upload Job Description">
-            📋 Job Description
+          <label class="file-label" title="Upload Files">
+            📄 Files
             <input
-              ref="interviewJobDescriptionFileInput"
+              ref="interviewFilesInput"
               type="file"
-              accept=".json"
-              @change="handleInterviewJobDescriptionFileChange"
+              accept=".txt,.json,.pdf"
+              @change="handleInterviewFilesChange"
               class="hidden-file-input"
+              multiple
             />
           </label>
-          <span v-if="interviewJobDescriptionFileName" class="file-name">{{ interviewJobDescriptionFileName }}</span>
-        </div>
-
-        <div class="file-upload-group">
-          <label class="file-label" title="Upload Candidate CV">
-            📄 Candidate CV
-            <input
-              ref="candidateCVFileInput"
-              type="file"
-              accept=".json"
-              @change="handleCandidateCVFileChange"
-              class="hidden-file-input"
-            />
-          </label>
-          <span v-if="candidateCVFileName" class="file-name">{{ candidateCVFileName }}</span>
-        </div>
-
-        <div class="file-upload-group">
-          <label class="file-label" title="Upload Interview Transcript">
-            🗣️ Interview Transcript
-            <input
-              ref="interviewTranscriptFileInput"
-              type="file"
-              accept=".json"
-              @change="handleInterviewTranscriptFileChange"
-              class="hidden-file-input"
-            />
-          </label>
-          <span v-if="interviewTranscriptFileName" class="file-name">{{ interviewTranscriptFileName }}</span>
+          <span v-if="interviewFiles.length" class="file-name">
+            {{ interviewFiles.map(f => f.name).join(', ') }}
+          </span>
         </div>
       </div>
 
@@ -253,19 +234,15 @@ const selectedFileName = ref<string | null>(null)
 
 // New refs for JD agent
 const transcriptFileInput = ref<HTMLInputElement | null>(null)
-const marketReportFileInput = ref<HTMLInputElement | null>(null)
-const transcriptFile = ref<File | null>(null)
-const marketReportFile = ref<File | null>(null)
-const transcriptFileName = ref<string | null>(null)
-const marketReportFileName = ref<string | null>(null)
+const jdFilesInput = ref<HTMLInputElement | null>(null)
+const jdFiles = ref<File[]>([])
+const jdFilesNames = computed(() => jdFiles.value.map(f => f.name))
 
 // New refs for Client Representative agent
 const clientTranscriptFileInput = ref<HTMLInputElement | null>(null)
+const clientTranscriptFiles = ref<File[]>([])
 const clientJobDescriptionFileInput = ref<HTMLInputElement | null>(null)
-const clientTranscriptFile = ref<File | null>(null)
-const clientJobDescriptionFile = ref<File | null>(null)
-const clientTranscriptFileName = ref<string | null>(null)
-const clientJobDescriptionFileName = ref<string | null>(null)
+const clientTranscriptFileNames = computed(() => clientTranscriptFiles.value.map(f => f.name))
 
 // New refs for Client Representative Creator agent
 const userInputFileInput = ref<HTMLInputElement | null>(null)
@@ -274,28 +251,19 @@ const userInputFileName = ref<string | null>(null)
 
 // New refs for Market Intelligence agent
 const marketIntelligenceFileInput = ref<HTMLInputElement | null>(null)
-const marketIntelligenceFile = ref<File | null>(null)
-const marketIntelligenceFileName = ref<string | null>(null)
+const marketIntelligenceFiles = ref<File[]>([])
 
 // New refs for Interview Report agent
-const interviewJobDescriptionFileInput = ref<HTMLInputElement | null>(null)
-const candidateCVFileInput = ref<HTMLInputElement | null>(null)
-const interviewTranscriptFileInput = ref<HTMLInputElement | null>(null)
-
-const interviewJobDescriptionFile = ref<File | null>(null)
-const candidateCVFile = ref<File | null>(null)
-const interviewTranscriptFile = ref<File | null>(null)
-
-const interviewJobDescriptionFileName = ref<string | null>(null)
-const candidateCVFileName = ref<string | null>(null)
-const interviewTranscriptFileName = ref<string | null>(null)
+const interviewFilesInput = ref<HTMLInputElement | null>(null)
+const interviewFiles = ref<File[]>([])
+const interviewFilesNames = computed(() => interviewFiles.value.map(f => f.name))
 
 const canSubmitJD = computed(() => {
-  return transcriptFile.value && marketReportFile.value
+  return jdFiles.value.length > 0 || prompt.value.trim() !== ''
 })
 
 const canSubmitClientFeedback = computed(() => {
-  return clientTranscriptFile.value && clientJobDescriptionFile.value
+  return clientTranscriptFiles.value.length > 0 || prompt.value.trim() !== ''
 })
 
 const canSubmitClientCharacteristics = computed(() => {
@@ -303,13 +271,11 @@ const canSubmitClientCharacteristics = computed(() => {
 })
 
 const canSubmitMarketIntelligence = computed(() => {
-  return marketIntelligenceFile.value !== null
+  return marketIntelligenceFiles.value.length > 0 || prompt.value.trim() !== ''
 })
 
 const canSubmitInterviewReport = computed(() => {
-  return interviewJobDescriptionFile.value && 
-         candidateCVFile.value && 
-         interviewTranscriptFile.value
+  return interviewFiles.value.length > 0 || prompt.value.trim() !== ''
 })
 
 const getFileUploadTitle = computed(() => {
@@ -340,34 +306,21 @@ const handleAgentSelect = (agentType: AgentType) => {
 const clearFiles = () => {
   selectedFile.value = null
   selectedFileName.value = null
-  transcriptFile.value = null
-  marketReportFile.value = null
-  transcriptFileName.value = null
-  marketReportFileName.value = null
-  clientTranscriptFile.value = null
-  clientJobDescriptionFile.value = null
-  clientTranscriptFileName.value = null
-  clientJobDescriptionFileName.value = null
+  jdFiles.value = []
+  clientTranscriptFiles.value = []
+  clientJobDescriptionFileInput.value = null
+  clientTranscriptFileNames.value = []
   userInputFile.value = null
   userInputFileName.value = null
-  marketIntelligenceFile.value = null
-  marketIntelligenceFileName.value = null
-  interviewJobDescriptionFile.value = null
-  candidateCVFile.value = null
-  interviewTranscriptFile.value = null
-  interviewJobDescriptionFileName.value = null
-  candidateCVFileName.value = null
-  interviewTranscriptFileName.value = null
+  marketIntelligenceFiles.value = []
+  interviewFiles.value = []
   if (fileInput.value) fileInput.value.value = ''
   if (transcriptFileInput.value) transcriptFileInput.value.value = ''
-  if (marketReportFileInput.value) marketReportFileInput.value.value = ''
+  if (jdFilesInput.value) jdFilesInput.value.value = ''
   if (clientTranscriptFileInput.value) clientTranscriptFileInput.value.value = ''
-  if (clientJobDescriptionFileInput.value) clientJobDescriptionFileInput.value.value = ''
   if (userInputFileInput.value) userInputFileInput.value.value = ''
   if (marketIntelligenceFileInput.value) marketIntelligenceFileInput.value.value = ''
-  if (interviewJobDescriptionFileInput.value) interviewJobDescriptionFileInput.value.value = ''
-  if (candidateCVFileInput.value) candidateCVFileInput.value.value = ''
-  if (interviewTranscriptFileInput.value) interviewTranscriptFileInput.value.value = ''
+  if (interviewFilesInput.value) interviewFilesInput.value.value = ''
 }
 
 const handleFileChange = () => {
@@ -395,27 +348,21 @@ const handleFileChange = () => {
   }
 }
 
-const handleTranscriptFileChange = () => {
-  const files = transcriptFileInput.value?.files
+const handleJDFileChange = () => {
+  const files = jdFilesInput.value?.files
   if (files?.length) {
-    transcriptFile.value = files[0]
-    transcriptFileName.value = files[0].name
-  }
-}
-
-const handleMarketReportFileChange = () => {
-  const files = marketReportFileInput.value?.files
-  if (files?.length) {
-    marketReportFile.value = files[0]
-    marketReportFileName.value = files[0].name
+    jdFiles.value = Array.from(files)
+  } else {
+    jdFiles.value = []
   }
 }
 
 const handleClientTranscriptFileChange = () => {
   const files = clientTranscriptFileInput.value?.files
   if (files?.length) {
-    clientTranscriptFile.value = files[0]
-    clientTranscriptFileName.value = files[0].name
+    clientTranscriptFiles.value = Array.from(files)
+  } else {
+    clientTranscriptFiles.value = []
   }
 }
 
@@ -448,188 +395,40 @@ const handleUserInputFileChange = () => {
 const handleMarketIntelligenceFileChange = () => {
   const files = marketIntelligenceFileInput.value?.files
   if (files?.length) {
-    marketIntelligenceFile.value = files[0]
-    marketIntelligenceFileName.value = files[0].name
-  }
-}
-
-const handleInterviewJobDescriptionFileChange = () => {
-  const files = interviewJobDescriptionFileInput.value?.files
-  if (files?.length) {
-    interviewJobDescriptionFile.value = files[0]
-    interviewJobDescriptionFileName.value = files[0].name
-  }
-}
-
-const handleCandidateCVFileChange = () => {
-  const files = candidateCVFileInput.value?.files
-  if (files?.length) {
-    candidateCVFile.value = files[0]
-    candidateCVFileName.value = files[0].name
-  }
-}
-
-const handleInterviewTranscriptFileChange = () => {
-  const files = interviewTranscriptFileInput.value?.files
-  if (files?.length) {
-    interviewTranscriptFile.value = files[0]
-    interviewTranscriptFileName.value = files[0].name
-  }
-}
-
-const handleSubmit = async () => {
-  const trimmedPrompt = prompt.value.trim()
-  const hasPrompt = trimmedPrompt !== ''
-  const hasFile = selectedFile.value !== null
-
-  if (!hasPrompt && !hasFile) return // Do nothing if both are empty
-
-  if (hasPrompt) {
-    messages.value.push({ role: 'user', content: trimmedPrompt })
-  } else if (hasFile) {
-    messages.value.push({
-      role: 'user',
-      content: `📎 Sent file: ${selectedFileName.value}`
-    })
-  }
-
-  // Read file content if present
-  let fileContent = ''
-  let fileName = ''
-  if (hasFile && selectedFile.value) {
-    fileContent = await selectedFile.value.text()
-    fileName = selectedFile.value.name
-  }
-
-  // If it's the client representative creator agent, handle the file differently
-  if (selectedAgent.value === 'client_representative_creator_agent' && selectedFile.value) {
-    const reply = await chatWithAgent(selectedAgent.value, {
-      prompt: trimmedPrompt,
-      user_input_file: selectedFile.value
-    })
-    messages.value.push({ role: 'assistant', content: reply })
+    marketIntelligenceFiles.value = Array.from(files)
   } else {
-    // Handle other agents
-    const reply = await chatWithAgent(selectedAgent.value, {
-      prompt: trimmedPrompt,
-      fileContent,
-      fileName
-    })
-    messages.value.push({ role: 'assistant', content: reply })
+    marketIntelligenceFiles.value = []
   }
-
-  // Clear inputs
-  prompt.value = ''
-  selectedFile.value = null
-  selectedFileName.value = null
-  if (fileInput.value) fileInput.value.value = ''
-
-  // Scroll to bottom
-  await nextTick()
-  chatContainer.value?.scrollTo({
-    top: chatContainer.value.scrollHeight,
-    behavior: 'smooth'
-  })
 }
 
-const handleJDSubmit = async () => {
-  if (!transcriptFile.value || !marketReportFile.value) return
-
-  messages.value.push({
-    role: 'user',
-    content: `📎 Generating Job Description using:\nTranscript: ${transcriptFileName.value}\nMarket Report: ${marketReportFileName.value}`
-  })
-
-  const reply = await chatWithAgent(selectedAgent.value, {
-    prompt: '',
-    transcript_file: transcriptFile.value,
-    market_report_file: marketReportFile.value
-  })
-
-  messages.value.push({ role: 'assistant', content: reply })
-  clearFiles()
-
-  // Scroll to bottom
-  await nextTick()
-  chatContainer.value?.scrollTo({
-    top: chatContainer.value.scrollHeight,
-    behavior: 'smooth'
-  })
-}
-
-const handleClientFeedbackSubmit = async () => {
-  if (!clientTranscriptFile.value || !clientJobDescriptionFile.value) return
-
-  messages.value.push({
-    role: 'user',
-    content: `📎 Generating Client Feedback using:\nTranscript: ${clientTranscriptFileName.value}\nJob Description: ${clientJobDescriptionFileName.value}`
-  })
-
-  const reply = await chatWithAgent(selectedAgent.value, {
-    prompt: '',
-    transcript_file: clientTranscriptFile.value,
-    job_description_file: clientJobDescriptionFile.value
-  })
-
-  messages.value.push({ role: 'assistant', content: reply })
-  clearFiles()
-
-  // Scroll to bottom
-  await nextTick()
-  chatContainer.value?.scrollTo({
-    top: chatContainer.value.scrollHeight,
-    behavior: 'smooth'
-  })
-}
-
-const handleMarketIntelligenceSubmit = async () => {
-  if (!marketIntelligenceFile.value) {
-    alert('Please upload a market report file')
-    return
+const handleInterviewFilesChange = () => {
+  const files = interviewFilesInput.value?.files
+  if (files?.length) {
+    interviewFiles.value = Array.from(files)
+  } else {
+    interviewFiles.value = []
   }
-
-  messages.value.push({
-    role: 'user',
-    content: `📎 Generating Market Intelligence using:\nMarket Report: ${marketIntelligenceFileName.value}`
-  })
-
-  const reply = await chatWithAgent(selectedAgent.value, {
-    prompt: '',
-    fileContent: await marketIntelligenceFile.value.text(),
-    fileName: marketIntelligenceFile.value.name
-  })
-
-  messages.value.push({ role: 'assistant', content: reply })
-  clearFiles()
-
-  // Scroll to bottom
-  await nextTick()
-  chatContainer.value?.scrollTo({
-    top: chatContainer.value.scrollHeight,
-    behavior: 'smooth'
-  })
 }
 
 const handleInterviewReportSubmit = async () => {
-  if (!interviewJobDescriptionFile.value || !candidateCVFile.value || !interviewTranscriptFile.value) {
-    alert('Please upload all required files')
+  if (interviewFiles.value.length === 0 && prompt.value.trim() === '') {
+    alert('Please enter manual input or upload at least one file.')
     return
   }
 
   messages.value.push({
     role: 'user',
-    content: `📎 Generating Interview Report using:\nJob Description: ${interviewJobDescriptionFileName.value}\nCandidate CV: ${candidateCVFileName.value}\nInterview Transcript: ${interviewTranscriptFileName.value}`
+    content: `📎 Generating Interview Report using:\nManual Input: ${prompt.value}\nFiles: ${interviewFiles.value.map(f => f.name).join(', ')}`
   })
 
   const reply = await chatWithAgent(selectedAgent.value, {
-    prompt: '',
-    job_description_file: interviewJobDescriptionFile.value,
-    candidate_cv_file: candidateCVFile.value,
-    interview_transcript_file: interviewTranscriptFile.value
+    prompt: prompt.value,
+    interview_files: interviewFiles.value
   })
 
   messages.value.push({ role: 'assistant', content: reply })
   clearFiles()
+  prompt.value = ''
 
   // Scroll to bottom
   await nextTick()
@@ -778,9 +577,9 @@ const handleClientCharacteristicsSubmit = async () => {
 .file-uploads {
   display: flex;
   flex-direction: row;
-  gap: 1rem;
+  gap: 0.5rem;
   width: 100%;
-  margin-bottom: 1rem;
+  /* margin-bottom: 1rem; */
   justify-content: center;
 }
 
@@ -840,7 +639,7 @@ const handleClientCharacteristicsSubmit = async () => {
   transition: all 0.3s;
   width: auto;
   min-width: 200px;
-  margin-top: 1rem;
+  /* margin-top: 1rem; */
   align-self: center;
 }
 
@@ -862,6 +661,7 @@ const handleClientCharacteristicsSubmit = async () => {
   border: 1px solid #ccc;
   border-radius: 0.5rem;
   outline: none;
+  width:100%;
 }
 
 .file-info {
