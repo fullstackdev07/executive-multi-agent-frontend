@@ -472,6 +472,90 @@ const handleClientCharacteristicsSubmit = async () => {
     behavior: 'smooth'
   })
 }
+
+const handleMarketIntelligenceSubmit = async () => {
+  if (marketIntelligenceFiles.value.length === 0 && prompt.value.trim() === '') {
+    alert('Please enter company information or upload at least one supporting document.')
+    return
+  }
+
+  messages.value.push({
+    role: 'user',
+    content: `📎 Generating Market Intelligence using:\nCompany Information: ${prompt.value}\nSupporting Documents: ${marketIntelligenceFiles.value.map(f => f.name).join(', ')}`
+  })
+
+  const reply = await chatWithAgent(selectedAgent.value, {
+    prompt: prompt.value,
+    supporting_documents: marketIntelligenceFiles.value
+  })
+
+  messages.value.push({ role: 'assistant', content: reply })
+  clearFiles()
+  prompt.value = ''
+
+  // Scroll to bottom
+  await nextTick()
+  chatContainer.value?.scrollTo({
+    top: chatContainer.value.scrollHeight,
+    behavior: 'smooth'
+  })
+}
+
+const handleJDSubmit = async () => {
+  if (jdFiles.value.length === 0 && prompt.value.trim() === '') {
+    alert('Please enter manual input or upload at least one file.')
+    return
+  }
+
+  messages.value.push({
+    role: 'user',
+    content: `📎 Generating Job Description using:\nManual Input: ${prompt.value}\nFiles: ${jdFiles.value.map(f => f.name).join(', ')}`
+  })
+
+  const reply = await chatWithAgent(selectedAgent.value, {
+    prompt: prompt.value,
+    jd_files: jdFiles.value
+  })
+
+  messages.value.push({ role: 'assistant', content: reply })
+  clearFiles()
+  prompt.value = ''
+
+  // Scroll to bottom
+  await nextTick()
+  chatContainer.value?.scrollTo({
+    top: chatContainer.value.scrollHeight,
+    behavior: 'smooth'
+  })
+}
+
+const handleClientFeedbackSubmit = async () => {
+  if (clientTranscriptFiles.value.length === 0 && prompt.value.trim() === '') {
+    alert('Please enter manual input text or upload at least one transcript file.')
+    return
+  }
+
+  messages.value.push({
+    role: 'user',
+    content: `📎 Generating Client Feedback using:\nManual Input: ${prompt.value}\nTranscript Files: ${clientTranscriptFiles.value.map(f => f.name).join(', ')}`
+  })
+
+  const reply = await chatWithAgent(selectedAgent.value, {
+    prompt: prompt.value,
+    transcript_files: clientTranscriptFiles.value
+  })
+
+  messages.value.push({ role: 'assistant', content: reply })
+  clearFiles()
+  prompt.value = ''
+
+  // Scroll to bottom
+  await nextTick()
+  chatContainer.value?.scrollTo({
+    top: chatContainer.value.scrollHeight,
+    behavior: 'smooth'
+  })
+}
 </script>
 
 <style scoped>
