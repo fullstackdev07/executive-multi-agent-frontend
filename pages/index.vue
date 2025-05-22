@@ -31,27 +31,36 @@
     <!-- Input and file upload for regular agents and client representative creator -->
     <form 
       v-if="selectedAgent === 'client_representative_creator_agent'" 
-      @submit.prevent="handleClientCharacteristicsSubmit" 
+      @submit.prevent="handleClientCreatorSubmit" 
       class="chat-input-container"
     >
+    <input
+      v-model="prompt"
+      type="text"
+      placeholder="Enter client description..."
+      class="chat-input"
+    />
       <div class="file-uploads">
         <div class="file-upload-group">
-          <label class="file-label" title="Upload User Input File">
-            📄 User Input File
+          <label class="file-label" title="Upload Transcript Files">
+            📄 Transcript Files
             <input
-              ref="userInputFileInput"
+              ref="clientCreatorFilesInput"
               type="file"
-              accept=".json"
-              @change="handleUserInputFileChange"
+              accept=".txt,.json,.pdf"
+              @change="handleClientCreatorFilesChange"
               class="hidden-file-input"
+              multiple
             />
           </label>
-          <span v-if="userInputFileName" class="file-name">{{ userInputFileName }}</span>
+          <span v-if="clientCreatorFiles.length" class="file-name">
+            {{ clientCreatorFiles.map(f => f.name).join(', ') }}
+          </span>
         </div>
       </div>
 
-      <button type="submit" class="chat-button" :disabled="!canSubmitClientCharacteristics">
-        Generate Client Characteristics
+      <button type="submit" class="chat-button" :disabled="!canSubmitClientCreator">
+        Generate Client Creator
       </button>
     </form>
 
@@ -217,8 +226,8 @@ import { chatWithAgent, type AgentType } from '../services/api'
 const agents = [
   { type: 'market_intelligence' as AgentType, name: 'Market Intelligence' },
   { type: 'jd_agenet' as AgentType, name: 'JD Agent' },
-  { type: 'client_representative_agent' as AgentType, name: 'Client Representative' },
   { type: 'client_representative_creator_agent' as AgentType, name: 'Client Representative Creator' },
+  { type: 'client_representative_agent' as AgentType, name: 'Client Representative' },
   { type: 'interview_report_agent' as AgentType, name: 'Interview Report' }
 ]
 
@@ -245,9 +254,9 @@ const clientJobDescriptionFileInput = ref<HTMLInputElement | null>(null)
 const clientTranscriptFileNames = computed(() => clientTranscriptFiles.value.map(f => f.name))
 
 // New refs for Client Representative Creator agent
-const userInputFileInput = ref<HTMLInputElement | null>(null)
-const userInputFile = ref<File | null>(null)
-const userInputFileName = ref<string | null>(null)
+const clientCreatorFilesInput = ref<HTMLInputElement | null>(null)
+const clientCreatorFiles = ref<File[]>([])
+const clientCreatorFilesNames = computed(() => clientCreatorFiles.value.map(f => f.name))
 
 // New refs for Market Intelligence agent
 const marketIntelligenceFileInput = ref<HTMLInputElement | null>(null)
@@ -266,8 +275,8 @@ const canSubmitClientFeedback = computed(() => {
   return clientTranscriptFiles.value.length > 0 || prompt.value.trim() !== ''
 })
 
-const canSubmitClientCharacteristics = computed(() => {
-  return userInputFile.value !== null
+const canSubmitClientCreator = computed(() => {
+  return clientCreatorFiles.value.length > 0 || prompt.value.trim() !== ''
 })
 
 const canSubmitMarketIntelligence = computed(() => {
@@ -310,15 +319,15 @@ const clearFiles = () => {
   clientTranscriptFiles.value = []
   clientJobDescriptionFileInput.value = null
   clientTranscriptFileNames.value = []
-  userInputFile.value = null
-  userInputFileName.value = null
+  clientCreatorFiles.value = []
+  clientCreatorFilesNames.value = []
   marketIntelligenceFiles.value = []
   interviewFiles.value = []
   if (fileInput.value) fileInput.value.value = ''
   if (transcriptFileInput.value) transcriptFileInput.value.value = ''
   if (jdFilesInput.value) jdFilesInput.value.value = ''
   if (clientTranscriptFileInput.value) clientTranscriptFileInput.value.value = ''
-  if (userInputFileInput.value) userInputFileInput.value.value = ''
+  if (clientCreatorFilesInput.value) clientCreatorFilesInput.value.value = ''
   if (marketIntelligenceFileInput.value) marketIntelligenceFileInput.value.value = ''
   if (interviewFilesInput.value) interviewFilesInput.value.value = ''
 }
@@ -374,21 +383,12 @@ const handleClientJobDescriptionFileChange = () => {
   }
 }
 
-const handleUserInputFileChange = () => {
-  const files = userInputFileInput.value?.files
+const handleClientCreatorFilesChange = () => {
+  const files = clientCreatorFilesInput.value?.files
   if (files?.length) {
-    const file = files[0]
-    if (file.type === 'application/json' || file.name.endsWith('.json')) {
-      userInputFile.value = file
-      userInputFileName.value = file.name
-    } else {
-      alert('Please select a JSON file')
-      if (userInputFileInput.value) {
-        userInputFileInput.value.value = ''
-      }
-      userInputFile.value = null
-      userInputFileName.value = null
-    }
+    clientCreatorFiles.value = Array.from(files)
+  } else {
+    clientCreatorFiles.value = []
   }
 }
 
@@ -438,32 +438,25 @@ const handleInterviewReportSubmit = async () => {
   })
 }
 
-const handleClientCharacteristicsSubmit = async () => {
-  if (!userInputFile.value) {
-    alert('Please select a user input file')
+const handleClientCreatorSubmit = async () => {
+  if (clientCreatorFiles.value.length === 0 && prompt.value.trim() === '') {
+    alert('Please enter client description or upload at least one transcript file.')
     return
   }
 
-  try {
-    messages.value.push({
-      role: 'user',
-      content: `📎 Generating Client Characteristics using:\nUser Input: ${userInputFileName.value}`
-    })
+  messages.value.push({
+    role: 'user',
+    content: `📎 Generating Client Creator using:\nClient Description: ${prompt.value}\nTranscript Files: ${clientCreatorFiles.value.map(f => f.name).join(', ')}`
+  })
 
-    const reply = await chatWithAgent(selectedAgent.value, {
-      prompt: '',
-      user_input_file: userInputFile.value
-    })
+  const reply = await chatWithAgent(selectedAgent.value, {
+    prompt: prompt.value,
+    transcript_files: clientCreatorFiles.value
+  })
 
-    messages.value.push({ role: 'assistant', content: reply })
-    clearFiles()
-  } catch (error) {
-    messages.value.push({
-      role: 'assistant',
-      content: `Error: Failed to generate client characteristics. Please make sure the file is in the correct format.`
-    })
-    console.error('Error in client characteristics submission:', error)
-  }
+  messages.value.push({ role: 'assistant', content: reply })
+  clearFiles()
+  prompt.value = ''
 
   // Scroll to bottom
   await nextTick()

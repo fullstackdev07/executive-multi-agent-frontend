@@ -157,43 +157,43 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       // Create FormData object
       const formData = new FormData();
       
-      // Add client_description (prompt)
+      // Add user_input (prompt)
       if (payload.prompt) {
-        formData.append('client_description', payload.prompt);
+        formData.append('user_input', payload.prompt);
       }
-
-      // Add all transcript files
+  
+      // Add all files
       if (payload.transcript_files && payload.transcript_files.length > 0) {
         for (const file of payload.transcript_files) {
-          formData.append('transcript_files', file, file.name);
+          formData.append('files', file, file.name);
         }
       }
-
+  
       console.log('Sending request to Client Feedback API:', {
         endpoint: 'https://executive-multi-agent.onrender.com/client_feedback',
-        client_description: payload.prompt,
-        transcript_files: payload.transcript_files?.map(f => f.name)
+        user_input: payload.prompt,
+        files: payload.transcript_files?.map(f => f.name)
       });
-
+  
       const response = await fetch('https://executive-multi-agent.onrender.com/client_feedback', {
         method: 'POST',
         body: formData
       });
-
+  
       console.log('Response status:', response.status);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       try {
-        const data = await response.json() as ClientFeedbackResponse;
-        return data.generated_prompt || 'No client feedback available in the response';
+        const data = await response.json();
+        return data.client_representative_feedback || 'No client representative feedback available in the response';
       } catch (parseError) {
         console.error('Error parsing response:', parseError);
         const textResponse = await response.text();
         console.log('Raw response:', textResponse);
-        return 'Error: Could not parse the client feedback response';
+        return 'Error: Could not parse the client representative feedback response';
       }
     } catch (error: any) {
       console.error('Error calling the Client Feedback API:', error);
@@ -207,20 +207,25 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       // Create FormData object
       const formData = new FormData();
       
-      // Append the user input file if present
-      if (payload.user_input_file) {
-        formData.append('user_input_file', payload.user_input_file);
-      } else {
-        throw new Error('User input file is required');
+      // Add client_description (prompt)
+      if (payload.prompt) {
+        formData.append('client_description', payload.prompt);
       }
 
-      console.log('Sending request to Client Characteristics API:', {
-        endpoint: 'https://executive-multi-agent.onrender.com/client_characteristics',
-        hasUserInputFile: !!payload.user_input_file,
-        fileName: payload.user_input_file?.name
+      // Add all transcript files
+      if (payload.transcript_files && payload.transcript_files.length > 0) {
+        for (const file of payload.transcript_files) {
+          formData.append('transcript_files', file, file.name);
+        }
+      }
+
+      console.log('Sending request to Client Creator API:', {
+        endpoint: 'https://executive-multi-agent.onrender.com/client_creator',
+        client_description: payload.prompt,
+        transcript_files: payload.transcript_files?.map(f => f.name)
       });
 
-      const response = await fetch('https://executive-multi-agent.onrender.com/client_characteristics', {
+      const response = await fetch('https://executive-multi-agent.onrender.com/client_creator', {
         method: 'POST',
         body: formData
       });
@@ -233,10 +238,10 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json() as ClientCharacteristicsResponse;
-      return data.response || 'No client characteristics available in the response';
+      const data = await response.json();
+      return data.generated_prompt || data.response || 'No client characteristics available in the response';
     } catch (error: any) {
-      console.error('Error calling the Client Characteristics API:', error);
+      console.error('Error calling the Client Creator API:', error);
       return `Error: ${error.message || 'Unknown error occurred'}`;
     }
   } else if (agentType === 'interview_report_agent') {
@@ -246,7 +251,7 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       
       // Add manual_input (prompt)
       if (payload.prompt) {
-        formData.append('manual_input', payload.prompt);
+        formData.append('input_text', payload.prompt);
       }
 
       // Add all files
@@ -258,7 +263,7 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
 
       console.log('Sending request to Interview Report API:', {
         endpoint: 'https://executive-multi-agent.onrender.com/interview_report',
-        manual_input: payload.prompt,
+        input_text: payload.prompt,
         files: payload.interview_files?.map(f => f.name)
       });
 
