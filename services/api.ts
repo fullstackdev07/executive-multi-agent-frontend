@@ -157,9 +157,9 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       // Create FormData object
       const formData = new FormData();
       
-      // Add manual_input_text (prompt)
+      // Add client_description (prompt)
       if (payload.prompt) {
-        formData.append('manual_input_text', payload.prompt);
+        formData.append('client_description', payload.prompt);
       }
 
       // Add all transcript files
@@ -171,7 +171,7 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
 
       console.log('Sending request to Client Feedback API:', {
         endpoint: 'https://executive-multi-agent.onrender.com/client_feedback',
-        manual_input_text: payload.prompt,
+        client_description: payload.prompt,
         transcript_files: payload.transcript_files?.map(f => f.name)
       });
 
