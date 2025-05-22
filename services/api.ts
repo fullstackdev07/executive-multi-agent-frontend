@@ -70,12 +70,12 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
 
       // Log what we're sending
       console.log('Sending request to Market Intelligence API:', {
-        endpoint: 'https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/market_intelligence',
+        endpoint: 'https://executive-multi-agent.onrender.com/market_intelligence',
         company_information: payload.prompt,
         supporting_documents: payload.supporting_documents?.map(f => f.name)
       });
 
-      const response = await fetch('https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/market_intelligence', {
+      const response = await fetch('https://executive-multi-agent.onrender.com/market_intelligence', {
         method: 'POST',
         body: formData
       });
@@ -120,12 +120,12 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       }
 
       console.log('Sending request to Job Description API:', {
-        endpoint: 'https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/job_description',
+        endpoint: 'https://executive-multi-agent.onrender.com/job_description',
         manual_input: payload.prompt,
         files: payload.jd_files?.map(f => f.name)
       });
 
-      const response = await fetch('https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/job_description', {
+      const response = await fetch('https://executive-multi-agent.onrender.com/job_description', {
         method: 'POST',
         body: formData
       });
@@ -170,12 +170,12 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       }
 
       console.log('Sending request to Client Feedback API:', {
-        endpoint: 'https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/client_feedback',
+        endpoint: 'https://executive-multi-agent.onrender.com/client_feedback',
         manual_input_text: payload.prompt,
         transcript_files: payload.transcript_files?.map(f => f.name)
       });
 
-      const response = await fetch('https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/client_feedback', {
+      const response = await fetch('https://executive-multi-agent.onrender.com/client_feedback', {
         method: 'POST',
         body: formData
       });
@@ -215,12 +215,12 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       }
 
       console.log('Sending request to Client Characteristics API:', {
-        endpoint: 'https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/client_characteristics',
+        endpoint: 'https://executive-multi-agent.onrender.com/client_characteristics',
         hasUserInputFile: !!payload.user_input_file,
         fileName: payload.user_input_file?.name
       });
 
-      const response = await fetch('https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/client_characteristics', {
+      const response = await fetch('https://executive-multi-agent.onrender.com/client_characteristics', {
         method: 'POST',
         body: formData
       });
@@ -257,12 +257,12 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       }
 
       console.log('Sending request to Interview Report API:', {
-        endpoint: 'https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/interview_report',
+        endpoint: 'https://executive-multi-agent.onrender.com/interview_report',
         manual_input: payload.prompt,
         files: payload.interview_files?.map(f => f.name)
       });
 
-      const response = await fetch('https://bb45-2405-201-4021-112e-a09c-f089-f179-f075.ngrok-free.app/interview_report', {
+      const response = await fetch('https://executive-multi-agent.onrender.com/interview_report', {
         method: 'POST',
         body: formData
       });
