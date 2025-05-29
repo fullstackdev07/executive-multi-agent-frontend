@@ -137,6 +137,13 @@ const handleUnifiedSubmit = async () => {
   const loadingMsg = reactive({ role: 'assistant', content: '', loading: true })
   messages.value.push(loadingMsg)
 
+  // Timer for 'please wait' message
+  let waitMsg: any = null
+  let waitTimer = setTimeout(() => {
+    waitMsg = reactive({ role: 'assistant', content: 'It may take some time, please wait.', loading: false })
+    messages.value.splice(messages.value.indexOf(loadingMsg) + 1, 0, waitMsg)
+  }, 6000)
+
   await nextTick()
   chatContainer.value?.scrollTo({
     top: chatContainer.value.scrollHeight,
@@ -165,6 +172,11 @@ const handleUnifiedSubmit = async () => {
 
     // Disable loading and trigger DOM update
     loadingMsg.loading = false
+    if (waitMsg) {
+      const idx = messages.value.indexOf(waitMsg)
+      if (idx !== -1) messages.value.splice(idx, 1)
+    }
+    clearTimeout(waitTimer)
     await nextTick()
 
     // Animate typing
@@ -181,6 +193,11 @@ const handleUnifiedSubmit = async () => {
   } catch (e: any) {
     loadingMsg.content = 'Error: ' + (e?.message || 'Unknown error')
     loadingMsg.loading = false
+    if (waitMsg) {
+      const idx = messages.value.indexOf(waitMsg)
+      if (idx !== -1) messages.value.splice(idx, 1)
+    }
+    clearTimeout(waitTimer)
   } finally {
     isLoading.value = false
     clearUnified()

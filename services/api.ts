@@ -83,11 +83,31 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       console.log('Response status:', response.status);
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        // Try to extract error details from the response
+        let errorText = '';
+        try {
+          const errorData = await response.json();
+          if (errorData.detail) {
+            errorText = errorData.detail;
+          } else {
+            errorText = JSON.stringify(errorData);
+          }
+        } catch (jsonErr) {
+          errorText = await response.text();
+        }
+        console.error('API Error Response:', errorText);
+        return `Error: ${errorText}`;
       }
 
       try {
-        const data = await response.json() as MarketIntelligenceResponse;
+        const data = await response.json() as MarketIntelligenceResponse;   
+        if (
+          data.market_report &&
+          data.market_report.includes("Cannot generate report")
+        ) {
+          return `Error: Enter a company name, a ticker symbol, or a short query about the company or market you're interested in. You can also upload supporting documents below or Upload relevant documents (PDF, TXT, JSON) like company profiles, existing reports, or news articles to provide more context.`;
+        }
+
         return data.market_report || 'No market report available in the response';
       } catch (parseError) {
         console.error('Error parsing response:', parseError);
@@ -133,7 +153,20 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       console.log('Response status:', response.status);
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        // Try to extract error details from the response
+        let errorText = '';
+        try {
+          const errorData = await response.json();
+          if (errorData.detail) {
+            errorText = "Specify the job role you want a description for (e.g., 'Software Engineer'). You can also provide a more detailed brief, a client persona to write for, or a previous market report to use as context. Supporting documents can be uploaded below or Upload relevant documents like company information, style guides, existing JD templates, or market reports (PDF, TXT, JSON) to enrich the job description.";
+          } else {
+            errorText = JSON.stringify(errorData);
+          }
+        } catch (jsonErr) {
+          errorText = await response.text();
+        }
+        console.error('API Error Response:', errorText);
+        return `Error: ${errorText}`;
       }
 
       try {
@@ -183,7 +216,20 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       console.log('Response status:', response.status);
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        // Try to extract error details from the response
+        let errorText = '';
+        try {
+          const errorData = await response.json();
+          if (errorData.detail) {
+            errorText = "Paste the text or document you want feedback on. You can also provide guidance on the client persona to adopt for the feedback (e.g., 'Act as a detail-oriented client'). Use '---CLIENT PERSONA GUIDANCE---' and '---DOCUMENT TO REVIEW---' delimiters if providing both. Supporting files can provide additional context for the client's persona or Upload documents (PDF, TXT, JSON) that provide context about the client's persona, values, or past communications, which will help the agent emulate them accurately when giving feedback.";
+          } else {
+            errorText = JSON.stringify(errorData);
+          }
+        } catch (jsonErr) {
+          errorText = await response.text();
+        }
+        console.error('API Error Response:', errorText);
+        return `Error: ${errorText}`;
       }
   
       try {
@@ -233,9 +279,20 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       console.log('Response status:', response.status);
       
       if (!response.ok) {
-        const errorText = await response.text();
+        // Try to extract error details from the response
+        let errorText = '';
+        try {
+          const errorData = await response.json();
+          if (errorData.detail) {
+            errorText = "Describe the client you want to emulate. This can be a short phrase (like 'skeptical client') or a more detailed description of their persona, priorities, values, and communication style. You can also upload transcripts below for tone analysis or Upload transcripts of client conversations, emails, or other documents (PDF, TXT, JSON) that reflect the client's tone and style.";
+          } else {
+            errorText = JSON.stringify(errorData);
+          }
+        } catch (jsonErr) {
+          errorText = await response.text();
+        }
         console.error('API Error Response:', errorText);
-        throw new Error(`HTTP error! status: ${response.status}`);
+        return `Error: ${errorText}`;
       }
 
       const data = await response.json();
@@ -275,7 +332,20 @@ export const chatWithAgent = async (agentType: AgentType, payload: ChatPayload):
       console.log('Response status:', response.status);
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        // Try to extract error details from the response
+        let errorText = '';
+        try {
+          const errorData = await response.json();
+          if (errorData.detail) {
+            errorText = "Provide instructions for the interview report, such as the candidate's name and role. You can also paste consultant notes or use delimiters (e.g., ---JOB SPEC---, ---CANDIDATE CV---) to structure detailed information. Upload relevant files like CVs, job specs, and interview transcripts below or Upload supporting documents: Candidate's CV/Resume, Job Specification, Interview Transcript/Notes, Role Scorecard (PDF, TXT, JSON). The agent will try to identify the type of document from its filename.";
+          } else {
+            errorText = JSON.stringify(errorData);
+          }
+        } catch (jsonErr) {
+          errorText = await response.text();
+        }
+        console.error('API Error Response:', errorText);
+        return `Error: ${errorText}`;
       }
 
       try {
